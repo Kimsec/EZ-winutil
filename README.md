@@ -1,4 +1,4 @@
-# ez-util
+# EZ-Util
 
 **ez-util** is a PowerShell-based utility script designed to simplify the installation of popular applications, system tweaks, and repair tasks on Windows. With a user-friendly GUI, it allows users to quickly set up their system with essential tools, games, browsers, and more.
 
