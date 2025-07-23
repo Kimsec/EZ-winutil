@@ -35,7 +35,10 @@
 4. **Enjoy**  
    - The script will handle the rest, including downloading, installing, and applying tweaks.
 ## Screenshots
-*Screenshots is coming*
+<img src="Screenshots/installer.png" alt="Installer" width="600">
+<img src="Screenshots/tweaks.png" alt="tweaks" width="600">
+<img src="Screenshots/update.png" alt="update" width="600">
+<img src="Screenshots/uninstall.png" alt="uinstaller" width="600">
 
 ## Requirements
 
