@@ -10,25 +10,24 @@
 
 
 ## Description
-**ez-util** is a PowerShell-based utility script designed to simplify the installation of popular applications, system tweaks, and repair tasks on Windows. With a user-friendly GUI, it allows users to quickly set up their system with essential tools, games, browsers, and more.
+**EZ-WinUtil** is a PowerShell-based utility script designed to simplify the installation of popular applications, system tweaks, repair tasks, updating and uninstalling software easy and user-friendly.
 
 ## Features
 
-- **Install Applications**: Choose from a wide range of popular programs like Plex, Discord, Spotify, OBS Studio, and more.
-- **Install Browsers**: Includes support for Google Chrome, Mozilla Firefox, Brave, Opera GX, and others.
-- **Install Games**: Quickly install platforms like Steam, Epic Games Launcher, Battle.net, and more.
-- **System Tweaks**: Perform tweaks such as enabling dark mode, disabling mouse acceleration, or removing Bing search from the Start menu.
-- **System Repair**: Run system repair tools like SFC, DISM, and disk cleanup.
-- **Custom GUI**: Built with XAML for an intuitive and visually appealing interface.
+- **Install Popular Software**: Easily install browsers, games, utilities, and more with one click.
+- **Tweaks & Repairs**: Apply useful Windows tweaks (e.g., dark mode, disable Bing search, classic right-click menu) and run repair tools (SFC, DISM, chkdsk, etc.).
+- **Update Applications**: See available updates for installed programs and update them directly from the GUI.
+- **Uninstall Applications**: Search, select, and uninstall programs using winget, registry, or Appx methods. Advanced mode lets you see system and Microsoft apps.
+- **Modern GUI**: Clean, dark-themed interface built with WPF/XAML via PowerShell.
 
 ## How to Use
 
 1. **Run the Script**  
-   Open PowerShell and execute the following command:
+   Open **PowerShell** and execute the following command:
    ```powershell
    iwr -useb kimsec.net/apps | iex
 2. **Select Actions**  
-   - Use the GUI to select the programs, browsers, games, tools, tweaks, or repair tasks you want to execute.
+   - Select the tab for Install, Tweaks & Repair, Update, or Uninstall.
 
 3. **Execute**  
    - Click the `Install` or `Run` button to start the process.
@@ -41,6 +40,7 @@
 - Windows 10 or newer.
 - PowerShell 5.1 or higher.
 - [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) (Windows Package Manager) must be installed.
+- Administrator privileges for installing/uninstalling system software
 
 ## Customization
 
