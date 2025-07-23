@@ -34,6 +34,8 @@
 
 4. **Enjoy**  
    - The script will handle the rest, including downloading, installing, and applying tweaks.
+## Screenshots
+*Screenshots is coming*
 
 ## Requirements
 
@@ -41,6 +43,7 @@
 - PowerShell 5.1 or higher.
 - [Winget](https://learn.microsoft.com/en-us/windows/package-manager/) (Windows Package Manager) must be installed.
 - Administrator privileges for installing/uninstalling system software
+
 
 ## Customization
 
