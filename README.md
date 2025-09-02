@@ -75,6 +75,11 @@ You can customize the list of programs, browsers, games, tools, tweaks, and repa
 - **Disk Cleanup**
 - **Full Scan & Repair**
 
+## Ideas
+
+- **More and better program catagories**
+- **Make this appear after windows install** 
+
 ## Disclaimer
 
 This script is provided "as is" without any warranty. Use it at your own risk. The author is not responsible for any damage caused by using this script.
