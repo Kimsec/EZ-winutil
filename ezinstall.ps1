@@ -6,19 +6,54 @@ Write-Host ""
 # Import necessary modules for GUI
 Add-Type -AssemblyName PresentationFramework
 
+# Function to download NVIDIA App
+function Download-NvidiaApp {
+    try {
+        Write-Host "Trying to find latest NVIDIA App version..." -ForegroundColor Yellow
+        
+        # Try to get the latest version from NVIDIA's API or page
+        $response = Invoke-WebRequest -Uri 'https://www.nvidia.com/en-us/software/nvidia-app/' -UseBasicParsing -TimeoutSec 10
+        $downloadLinks = $response.Content | Select-String -Pattern 'https://[^"]*\.download\.nvidia\.com/nvapp/client/[^"]*\.exe' -AllMatches
+        
+        if ($downloadLinks.Matches.Count -gt 0) {
+            $latestLink = $downloadLinks.Matches[0].Value
+            Write-Host "Found latest version: $latestLink" -ForegroundColor Green
+            Invoke-WebRequest -Uri $latestLink -OutFile "$env:USERPROFILE\Downloads\NVIDIA_App.exe"
+            return $true
+        }
+    }
+    catch {
+        Write-Host "Could not find latest version, using fallback..." -ForegroundColor Yellow
+    }
+    
+    # Fallback to known version
+    try {
+        Write-Host "Downloading NVIDIA App (fallback version)..." -ForegroundColor Yellow
+        Invoke-WebRequest -Uri 'https://uk.download.nvidia.com/nvapp/client/11.0.5.245/NVIDIA_app_v11.0.5.245.exe' -OutFile "$env:USERPROFILE\Downloads\NVIDIA_App.exe"
+        return $true
+    }
+    catch {
+        Write-Host "Failed to download NVIDIA App: $_" -ForegroundColor Red
+        return $false
+    }
+}
+
 $programs = @(
     [PSCustomObject]@{ Name = "Plex"; Command = "winget install --id=Plex.Plex" },
     [PSCustomObject]@{ Name = "Discord"; Command = "winget install --id=Discord.Discord" },
+    [PSCustomObject]@{ Name = "Auto Accept For CS2"; Command = "Invoke-WebRequest -Uri 'https://github.com/kimsec/AutoAccept-CS2/releases/latest/download/AutoAccept.exe' -OutFile '$env:USERPROFILE\Documents\AutoAccept.exe'" },
+    [PSCustomObject]@{ Name = "NVIDIA App"; Command = "Download-NvidiaApp" },
     [PSCustomObject]@{ Name = "Spotify"; Command = "winget install --id=Spotify.Spotify" },
     [PSCustomObject]@{ Name = "OBS Studio"; Command = "winget install --id=OBSProject.OBSStudio" },
-    [PSCustomObject]@{ Name = "CapCut"; Command = "winget install --id=ByteDance.CapCut" },
     [PSCustomObject]@{ Name = "LM Studio"; Command = "winget install --id=ElementLabs.LMStudio" },
     [PSCustomObject]@{ Name = "VLC Media Player"; Command = "winget install --id=VideoLAN.VLC" },
     [PSCustomObject]@{ Name = "Steelseries GG"; Command = "winget install --id=SteelSeries.GG" },
     [PSCustomObject]@{ Name = "Logitech G Hub"; Command = "winget install --id=Logitech.GHUB" },
-    [PSCustomObject]@{ Name = "LibreOffice"; Command = "winget install --id=TheDocumentFoundation.LibreOffice" },
-    [PSCustomObject]@{ Name = "Razer Synapse"; Command = "winget install --id=RazerInc.RazerInstaller4" }
-    [PSCustomObject]@{ Name = "InkScape"; Command = "winget install --id=Inkscape.Inkscape" }
+    [PSCustomObject]@{ Name = "Razer Synapse"; Command = "winget install --id=RazerInc.RazerInstaller4" },
+    [PSCustomObject]@{ Name = "Roccat Swarm"; Command = "winget install --id=TurtleBeach.ROCCATSwarm" },
+    [PSCustomObject]@{ Name = "Ookla Speedtest"; Command = "winget install --id=Ookla.Speedtest.Desktop" },
+	[PSCustomObject]@{ Name = "LocalSend"; Command = "winget install --id=Ookla.LocalSend.LocalSend" },
+    [PSCustomObject]@{ Name = "HWMonitor"; Command = "winget install --id=CPUID.HWMonitor" }
 )
 
 $browsers = @(
@@ -29,6 +64,7 @@ $browsers = @(
     [PSCustomObject]@{ Name = "Safari"; Command = "winget install --id=Apple.Safari" },
     [PSCustomObject]@{ Name = "Brave Browser"; Command = "winget install --id=Brave.Brave" },
     [PSCustomObject]@{ Name = "Vivaldi"; Command = "winget install --id=Vivaldi.Vivaldi" },
+    [PSCustomObject]@{ Name = "Zen Browser"; Command = "winget install --id=Zen-Team.Zen-Browser" },
     [PSCustomObject]@{ Name = "Tor Browser"; Command = "winget install --id=TorProject.TorBrowser" }
 )
 
@@ -42,25 +78,39 @@ $games = @(
     [PSCustomObject]@{ Name = "EA App"; Command = "winget install --id=ElectronicArts.EADesktop" },
     [PSCustomObject]@{ Name = "Jagex Launcher"; Command = "winget install --id=Jagex.Runescape" },
     [PSCustomObject]@{ Name = "GOG Galaxy"; Command = "winget install --id=GOG.Galaxy" },
+    [PSCustomObject]@{ Name = "Valorant (EU)"; Command = "winget install --id=RiotGames.Valorant.EU" },
+    [PSCustomObject]@{ Name = "LoL (EUW)"; Command = "winget install --id=RiotGames.LeagueOfLegends.EUW" },
+    [PSCustomObject]@{ Name = "Itch.io"; Command = "winget install --id=ItchIo.Itch" },
     [PSCustomObject]@{ Name = "CurseForge"; Command = "winget install --id=Overwolf.CurseForge" }
 )
 
 $tools = @(
-    [PSCustomObject]@{ Name = "PowerShell 7"; Command = "winget install --id=Microsoft.PowerShell" },
-    [PSCustomObject]@{ Name = "Notepad++"; Command = "winget install --id=Notepad++.Notepad++" },
-    [PSCustomObject]@{ Name = "Microsoft VSCode"; Command = "winget install --id=Microsoft.VisualStudioCode" },
+    [PSCustomObject]@{ Name = "PowerShell 7"; Command = "winget install --id=Microsoft.PowerShell" },    
     [PSCustomObject]@{ Name = "Wireguard VPN"; Command = "winget install --id=WireGuard.WireGuard" },
-    [PSCustomObject]@{ Name = "Gimp"; Command = "winget install --id=GIMP.GIMP.Nightly" },
-    [PSCustomObject]@{ Name = "Blender 3D"; Command = "winget install --id=BlenderFoundation.Blender" },
     [PSCustomObject]@{ Name = "Cinebench R23"; Command = "winget install --id=Maxon.CinebenchR23" },
     [PSCustomObject]@{ Name = "Heaven Benchmark"; Command = "winget install --id=Unigine.HeavenBenchmark" },
-    [PSCustomObject]@{ Name = "Auto Accept For CS2"; Command = "Invoke-WebRequest -Uri 'https://github.com/kimsec/AutoAccept-CS2/releases/latest/download/AutoAccept.exe' -OutFile '$env:USERPROFILE\Documents\AutoAccept.exe'" },
     [PSCustomObject]@{ Name = "Raspberry Pi Imager"; Command = "winget install --id=RaspberryPiFoundation.RaspberryPiImager" },
-    [PSCustomObject]@{ Name = "HWMonitor"; Command = "winget install --id=CPUID.HWMonitor" },
     [PSCustomObject]@{ Name = "Dolby Digital Codecs"; Command = "winget install --id=9NVJQJBDKN97" },
     [PSCustomObject]@{ Name = "Balena Etcher"; Command = "winget install --id=Balena.Etcher" },
     [PSCustomObject]@{ Name = "Ultimaker Cura"; Command = "winget install --id=Ultimaker.Cura" },
+	[PSCustomObject]@{ Name = "Tailscale"; Command = "winget install --id=Tailscale.Tailscale" },
+    [PSCustomObject]@{ Name = "Handbrake"; Command = "winget install --id=HandBrake.HandBrake" },
+    [PSCustomObject]@{ Name = "Maltego"; Command = "winget install --id=Maltego.Maltego" },
+    [PSCustomObject]@{ Name = "MS PowerToys"; Command = "winget install --id=Microsoft.PowerToys" },
+    [PSCustomObject]@{ Name = "WinRAR"; Command = "winget install --id=RARLab.WinRAR" },
+    [PSCustomObject]@{ Name = "Alt Drag/Snap"; Command = "winget install --id=AltSnap.AltSnap" },
 	[PSCustomObject]@{ Name = "Revo Uninstaller"; Command = "winget install --id=RevoUninstaller.RevoUninstaller" }
+)
+
+$editing = @(
+    [PSCustomObject]@{ Name = "Blender 3D"; Command = "winget install --id=BlenderFoundation.Blender" },
+    [PSCustomObject]@{ Name = "Notepad++"; Command = "winget install --id=Notepad++.Notepad++" },
+    [PSCustomObject]@{ Name = "Microsoft VSCode"; Command = "winget install --id=Microsoft.VisualStudioCode" },
+    [PSCustomObject]@{ Name = "Gimp (Photoshop)"; Command = "winget install --id=GIMP.GIMP.Nightly" },
+    [PSCustomObject]@{ Name = "CapCut"; Command = "winget install --id=ByteDance.CapCut" },
+    [PSCustomObject]@{ Name = "LibreOffice"; Command = "winget install --id=TheDocumentFoundation.LibreOffice" },
+    [PSCustomObject]@{ Name = "Google Drive"; Command = "winget install --id=Google.GoogleDrive" },
+    [PSCustomObject]@{ Name = "InkScape"; Command = "winget install --id=Inkscape.Inkscape" }
 )
 
 $tweaks = @(
@@ -172,7 +222,7 @@ $repair = @(
     },
     [PSCustomObject]@{
         Name = "Disk Cleanup"
-        Command = 'cleanmgr.exe /d C: /VERYLOWDISK Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase'
+        Command = 'cleanmgr.exe /d C: /VERYLOWDISK; Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase'
     },
     [PSCustomObject]@{
         Name = "Full Scan & Repair (RECOMMENDED)"
@@ -283,16 +333,18 @@ Read-Host '`nPress Enter to Continue'"
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <!-- Programmer -->
-                <StackPanel Grid.Column="0" Margin="10">
+                <StackPanel Grid.Column="0" Margin="0,10,10,0">
                     <TextBlock Text="Programs" FontSize="18" Margin="0,0,0,10" FontWeight="Bold"/>
-                    <ListBox Name="ProgramList" SelectionMode="Multiple" Height="300" Background="#161616" Foreground="White">
+                    <ListBox Name="ProgramList" SelectionMode="Multiple" Height="330" Background="#161616" Foreground="White" FocusVisualStyle="{x:Null}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding Name}" 
                                           IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected, Mode=TwoWay}" 
-                                          Foreground="#cccccc"/>
+                                          Foreground="#cccccc"
+                                          Margin="0,1"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -300,12 +352,13 @@ Read-Host '`nPress Enter to Continue'"
                 <!-- Nettlesere -->
                 <StackPanel Grid.Column="1" Margin="10">
                     <TextBlock Text="Web Browsers" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
-                    <ListBox Name="BrowserList" SelectionMode="Multiple" Height="300" Background="#161616" Foreground="White">
+                    <ListBox Name="BrowserList" SelectionMode="Multiple" Height="330" Background="#161616" Foreground="White">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding Name}" 
                                           IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected, Mode=TwoWay}" 
-                                          Foreground="#cccccc"/>
+                                          Foreground="#cccccc"
+                                          Margin="0,1"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -313,32 +366,49 @@ Read-Host '`nPress Enter to Continue'"
                 <!-- Spill -->
                 <StackPanel Grid.Column="2" Margin="10">
                     <TextBlock Text="Games" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
-                    <ListBox Name="GameList" SelectionMode="Multiple" Height="300" Background="#161616" Foreground="White">
+                    <ListBox Name="GameList" SelectionMode="Multiple" Height="330" Background="#161616" Foreground="White">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding Name}" 
                                           IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected, Mode=TwoWay}" 
-                                          Foreground="#cccccc"/>
+                                          Foreground="#cccccc"
+                                          Margin="0,1"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </StackPanel>
-                <!-- Tweaks -->
+                <!-- Tools -->
                 <StackPanel Grid.Column="3" Margin="10">
                     <TextBlock Text="Tools" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
-                    <ListBox Name="ToolsList" SelectionMode="Multiple" Height="300" Background="#161616" Foreground="White">
+                    <ListBox Name="ToolsList" SelectionMode="Multiple" Height="330" Background="#161616" Foreground="White">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding Name}" 
                                           IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected, Mode=TwoWay}" 
-                                          Foreground="#cccccc"/>
+                                          Foreground="#cccccc"
+                                          Margin="0,1"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </StackPanel>
+                <!-- Editing -->
+                <StackPanel Grid.Column="4" Margin="10,10,0,0">
+                    <TextBlock Text="Editing" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <ListBox Name="EditingList" SelectionMode="Multiple" Height="330" Background="#161616" Foreground="White">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Name}" 
+                                          IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected, Mode=TwoWay}" 
+                                          Foreground="#cccccc"
+                                          Margin="0,1"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+
                 <!-- Installer-knapper -->
-                <StackPanel Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
-                    <Button Content="Install" Width="150" Height="35" Background="#161616" Foreground="#cccccc" FontSize="18" HorizontalAlignment="Left" Margin="0,0,20,0" Name="InstallButton">
+                <StackPanel Grid.ColumnSpan="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,0">
+                    <Button Content="Install" Width="150" Height="35" Background="#161616" Foreground="#cccccc" FontSize="16" HorizontalAlignment="Left" Margin="0,0,20,0" Name="InstallButton">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
@@ -347,7 +417,7 @@ Read-Host '`nPress Enter to Continue'"
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button Content="Close" Width="150" Height="35" Background="#161616" Foreground="#cccccc" FontSize="18" HorizontalAlignment="Right" Name="ExitButton">
+                    <Button Content="Close" Width="150" Height="35" Background="#161616" Foreground="#cccccc" FontSize="16" HorizontalAlignment="Right" Name="ExitButton">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
@@ -359,7 +429,7 @@ Read-Host '`nPress Enter to Continue'"
                 </StackPanel>
                 <!-- Powered by -->
                 <TextBlock Text="Powered by Kimsec.net"
-                           Grid.ColumnSpan="4"
+                           Grid.ColumnSpan="5"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Bottom"
                            Margin="0,0,10,10"
@@ -382,42 +452,47 @@ Read-Host '`nPress Enter to Continue'"
                      • Rad 1: Knapper (Run! og Exit)
                      • Rad 2: "Powered by" tekst -->
                 <Grid.RowDefinitions>
+                    <!-- content (fixed ListBox heights keep content size) -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- flexible spacer that pushes buttons lower -->
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
                 <!-- Tweaks (backup red color: #b50000 -->
-                <StackPanel Grid.Column="0" Margin="10">
-                    <TextBlock Text="Tweaks" FontSize="18" Margin="0,0,0,10" FontWeight="Bold"/>
-                    <ListBox Name="TweaksList" SelectionMode="Multiple" Height="300" Background="#161616" Foreground="White">
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                    <TextBlock Text="Tweaks" FontSize="18" Margin="0,10,0,10" FontWeight="Bold"/>
+                    <ListBox Name="TweaksList" SelectionMode="Multiple" Height="330" Background="#161616" Foreground="White">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding Name}" 
                                           IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected, Mode=TwoWay}"
-                                          Foreground="#cccccc"/>
+                                          Foreground="#cccccc"
+                                          Margin="0,1"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </StackPanel>
                 
                 <!-- Repair -->
-                <StackPanel Grid.Column="1" Margin="10">
-                    <TextBlock Text="Repair" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
-                    <ListBox Name="RepairList" SelectionMode="Multiple" Height="300" Background="#161616" Foreground="White">
+                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                    <TextBlock Text="Repair" FontSize="18" FontWeight="Bold" Margin="0,10,0,10"/>
+                    <ListBox Name="RepairList" SelectionMode="Multiple" Height="330" Background="#161616" Foreground="White">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding Name}" 
                                           IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected, Mode=TwoWay}"
-                                          Foreground="#cccccc"/>
+                                          Foreground="#cccccc"
+                                          Margin="0,1"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </StackPanel>
 
                 <!-- Knapper (plassering: rad 1, spenner over begge kolonner) -->
-                <StackPanel Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
-                    <Button Content="Run" Name="InstallTweaks" Width="150" Height="35" Background="#161616" Foreground="#cccccc" FontSize="18" Margin="0,0,20,0">
+                <StackPanel Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,0">
+                    <Button Content="Run" Name="InstallTweaks" Width="150" Height="35" Background="#161616" Foreground="#cccccc" FontSize="16" Margin="0,0,20,0">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
@@ -426,7 +501,7 @@ Read-Host '`nPress Enter to Continue'"
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button Content="Close" Name="ExitButton_tweaks" Width="150" Height="35" Background="#161616" Foreground="#cccccc" FontSize="18">
+                    <Button Content="Close" Name="ExitButton_tweaks" Width="150" Height="35" Background="#161616" Foreground="#cccccc" FontSize="16">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
@@ -458,15 +533,16 @@ Read-Host '`nPress Enter to Continue'"
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <StackPanel Margin="10">
-                            <TextBlock Text="Available updates:" FontSize="16" FontWeight="Bold" Foreground="#cccccc" Margin="0,0,0,0" HorizontalAlignment="Center"/>
-                            <CheckBox Name="SelectAllUpdatesCheckbox" Content="Select all" Margin="7,0,0,5" Foreground="#cccccc"/>
+                        <StackPanel Margin="0,0,0,10" Grid.Row="0">
+                            <TextBlock Text="Available updates:" FontSize="18" FontWeight="Bold" Foreground="#cccccc" Margin="0,0,0,0" HorizontalAlignment="Center"/>
+                            <CheckBox Name="SelectAllUpdatesCheckbox" Content="Select all" Margin="7,0,0,4" Foreground="#cccccc" FontWeight="Bold" HorizontalAlignment="Left" FocusVisualStyle="{x:Null}"/>
                             <ListBox Name="UpdateList" SelectionMode="Multiple" Height="330" Background="#161616" Foreground="White">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <CheckBox Content="{Binding Display}" 
                                                 IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected, Mode=TwoWay}" 
-                                                Foreground="#cccccc"/>
+                                                Foreground="#cccccc"
+                                                Margin="0,1"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -474,8 +550,8 @@ Read-Host '`nPress Enter to Continue'"
 
 
                         <!-- Knapper -->
-                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-                            <Button Content="Update Now" Name="UpdateNowButton" Width="150" Height="35" Background="#161616" Foreground="#cccccc" FontSize="18" Margin="0,0,20,0">
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
+                            <Button Content="Update" Name="UpdateNowButton" Width="150" Height="35" Background="#161616" Foreground="#cccccc" FontSize="16" Margin="0,0,20,0">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
@@ -484,7 +560,7 @@ Read-Host '`nPress Enter to Continue'"
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>
-                            <Button Content="Close" Name="ExitButton_Update" Width="150" Height="35" Background="#161616" Foreground="#cccccc" FontSize="18">
+                            <Button Content="Close" Name="ExitButton_Update" Width="150" Height="35" Background="#161616" Foreground="#cccccc" FontSize="16">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
@@ -512,7 +588,7 @@ Read-Host '`nPress Enter to Continue'"
                             <RowDefinition Height="*"/>   <!-- Listbokser -->
                             <RowDefinition Height="Auto"/> <!-- Knapper -->
                         </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="0" Margin="0,0,0,10">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="0" Margin="0,0,0,0">
                             <TextBlock Text="Advanced" Foreground="#cccccc" VerticalAlignment="Center" Margin="0,0,5,0"/>
                             <ToggleButton Name="AdvancedToggle" Width="40" Height="20" ToolTip="Show system and Microsoft applications" FocusVisualStyle="{x:Null}">
                                 <ToggleButton.Template>
@@ -556,14 +632,14 @@ Read-Host '`nPress Enter to Continue'"
                         </StackPanel>
 
                         <!-- Søkefelt -->
-                        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,0">
                             <TextBox Name="UninstallSearchBox"
                                     Width="300"
                                     ToolTip="Search for program"
                                     VerticalAlignment="Center"
-                                    Background="#1E1E1E"
+                                    Background="#161616"
                                     Foreground="White"
-                                    BorderBrush="#444"
+                                    BorderBrush="#ccc"
                                     Padding="5"/>
                         </StackPanel>
 
@@ -580,16 +656,16 @@ Read-Host '`nPress Enter to Continue'"
                                     Grid.Column="0"
                                     SelectionMode="Multiple"
                                     Background="#161616"
-                                    Foreground="White"
-                                    Margin="0,0,10,0"
-                                    Height="300">
+                                    Foreground="#cccccc"
+                                    Margin="0,0,0,0"
+                                    Height="330">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <CheckBox Content="{Binding Display}"
                                                 Tag="{Binding}"
                                                 IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected, Mode=TwoWay}"
-                                                Foreground="White"
-                                                Margin="5,2"/>
+                                                Foreground="#cccccc"
+                                                Margin="0,1"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -598,7 +674,7 @@ Read-Host '`nPress Enter to Continue'"
                             <TextBlock Grid.Column="1"
                                     Text="-->"
                                     FontSize="18"
-                                    Foreground="#ccc"
+                                    Foreground="#cccccc"
                                     Margin="10"
                                     VerticalAlignment="Center"/>
 
@@ -606,16 +682,16 @@ Read-Host '`nPress Enter to Continue'"
                             <ListBox Name="SelectedForUninstallList"
                                     Grid.Column="2"
                                     Background="#161616"
-                                    Foreground="White"
-                                    Margin="10,0,0,0"
-                                    Height="300">
+                                    Foreground="#cccccc"
+                                    Margin="0,0,0,0"
+                                    Height="330">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <CheckBox Content="{Binding Display}"
                                                 Tag="{Binding}"
                                                 IsChecked="True"
-                                                Foreground="White"
-                                                Margin="5,2"/>
+                                                Foreground="#cccccc"
+                                                Margin="0,1"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -624,13 +700,13 @@ Read-Host '`nPress Enter to Continue'"
                         <StackPanel Grid.Row="2"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Center"
-                                    Margin="0,10">
-                            <Button Content="Uninstall Now"
+                                    Margin="0,0,0,0">
+                            <Button Content="Uninstall"
                                     Name="UninstallNowButton"
                                     Width="150"
                                     Height="35"
                                     FontSize="16"
-                                    Margin="10"
+                                    Margin="0,0,20,0"
                                     Background="#161616"
                                     Foreground="#cccccc">
                                 <Button.Template>
@@ -647,7 +723,6 @@ Read-Host '`nPress Enter to Continue'"
                                     Width="150"
                                     Height="35"
                                     FontSize="16"
-                                    Margin="10"
                                     Background="#161616"
                                     Foreground="#cccccc">
                                 <Button.Template>
@@ -685,6 +760,7 @@ $programList   = $window.FindName("ProgramList")
 $browserList   = $window.FindName("BrowserList")
 $gameList      = $window.FindName("GameList")
 $toolsList     = $window.FindName("ToolsList")
+$editingList   = $window.FindName("EditingList")
 $installButton = $window.FindName("InstallButton")
 $exitButton    = $window.FindName("ExitButton")
 
@@ -710,6 +786,26 @@ $UninstallSearchBox          = $window.FindName("UninstallSearchBox")
 $AdvancedToggle              = $window.FindName("AdvancedToggle")
 $mainTabControl              = $window.FindName("MainTabControl")
 
+# --- Placeholder (watermark) for uninstall search box ---
+$uninstallSearchPlaceholder = "Search for program"
+$UninstallSearchBox.Tag = $uninstallSearchPlaceholder
+$UninstallSearchBox.Text = $uninstallSearchPlaceholder
+$UninstallSearchBox.Foreground = 'Gray'
+
+$UninstallSearchBox.Add_GotFocus({
+    if ($UninstallSearchBox.Text -eq $UninstallSearchBox.Tag) {
+        $UninstallSearchBox.Text = ''
+        $UninstallSearchBox.Foreground = 'White'
+    }
+})
+
+$UninstallSearchBox.Add_LostFocus({
+    if ([string]::IsNullOrWhiteSpace($UninstallSearchBox.Text)) {
+        $UninstallSearchBox.Text = $UninstallSearchBox.Tag
+        $UninstallSearchBox.Foreground = 'Gray'
+    }
+})
+
 # --- 4) Bind data til ListBox-ene ---
 $programList.ItemsSource = $programs | Sort-Object Name
 $browserList.ItemsSource = $browsers | Sort-Object Name
@@ -717,6 +813,7 @@ $gameList.ItemsSource    = $games | Sort-Object Name
 $tweaksList.ItemsSource  = $tweaks | Sort-Object Name
 $repairList.ItemsSource  = $repair | Sort-Object Name
 $toolsList.ItemsSource   = $tools | Sort-Object Name
+$editingList.ItemsSource = $editing | Sort-Object Name
 
 # Hent liste over oppdaterbare programmer med winget
 function Get-WingetUpgrades {
@@ -949,13 +1046,14 @@ $installButton.Add_Click({
     $selectedBrowsers = $browserList.SelectedItems
     $selectedGames = $gameList.SelectedItems
     $selectedTools = $toolsList.SelectedItems
+    $selectedEditing = $editingList.SelectedItems
 
-    if (-not $selectedPrograms -and -not $selectedBrowsers -and -not $selectedGames -and -not $selectedTools) {
+    if (-not $selectedPrograms -and -not $selectedBrowsers -and -not $selectedGames -and -not $selectedTools -and -not $selectedEditing) {
         Show-CustomMessageBox -Message "Ingen programmer er valgt." -Title "Feil"
         return
     }
 
-    $selectedItems = @($selectedPrograms) + @($selectedBrowsers) + @($selectedGames) + @($selectedTools)
+    $selectedItems = @($selectedPrograms) + @($selectedBrowsers) + @($selectedGames) + @($selectedTools) + @($selectedEditing)
     $installingPopup = Show-InstallingPopup -Message "Initialising install..."
 
     foreach ($item in $selectedItems) {
@@ -966,10 +1064,19 @@ $installButton.Add_Click({
             $installingPopup.Top = $window.Top + ($window.Height - $installingPopup.ActualHeight) / 2
         }, "Normal")
 
-        if ($item.Command -like "Invoke-WebRequest*") {
-            Invoke-Expression $item.Command
-            if ($item.Name -eq "Auto Accept For CS2") {
-                Show-CustomMessageBox -Message "Auto Accept For CS2 is saved in \Documents." -Title "Information"
+        if ($item.Command -like "Invoke-WebRequest*" -or $item.Command -eq "Download-NvidiaApp") {
+            if ($item.Command -eq "Download-NvidiaApp") {
+                $success = & $item.Command
+                if ($success) {
+                    Show-CustomMessageBox -Message "NVIDIA App installer is saved in \Downloads folder." -Title "Information"
+                } else {
+                    Show-CustomMessageBox -Message "Failed to download NVIDIA App. Please try again or download manually." -Title "Error"
+                }
+            } else {
+                Invoke-Expression $item.Command
+                if ($item.Name -eq "Auto Accept For CS2") {
+                    Show-CustomMessageBox -Message "Auto Accept For CS2 is saved in \Documents." -Title "Information"
+                }
             }
         }
         else {
@@ -999,6 +1106,7 @@ $installButton.Add_Click({
     $browserList.SelectedItems.Clear()
     $gameList.SelectedItems.Clear()
     $toolsList.SelectedItems.Clear()
+    $editingList.SelectedItems.Clear()
 })
 
 $installTweaks.Add_Click({
@@ -1012,49 +1120,66 @@ $installTweaks.Add_Click({
     }
 
     $selectedItems = @($selectedTweaks) + @($selectedRepair)
+    $installingPopup = Show-InstallingPopup -Message "Initialising tweaks/repairs..."
 
     $total = $selectedItems.Count
     $i = 1
+    $errors = @()
 
     foreach ($item in $selectedItems) {
-        $installingPopup.FindName("MessageText").Text = "($i/$total) Installing $($item.Name). Please wait..."
+        $installingPopup.FindName("MessageText").Text = "($i/$total) Running: $($item.Name). Please wait..."
         $installingPopup.UpdateLayout()
         $installingPopup.Dispatcher.Invoke([action]{
             $installingPopup.Left = $window.Left + ($window.Width - $installingPopup.ActualWidth) / 2
             $installingPopup.Top = $window.Top + ($window.Height - $installingPopup.ActualHeight) / 2
         }, "Normal")
 
-        if ($item.Command -like "Invoke-WebRequest*") {
-            Invoke-Expression $item.Command
-            if ($item.Name -eq "Auto Accept For CS2") {
-                Show-CustomMessageBox -Message "Auto Accept For CS2 is saved in \Documents." -Title "Information"
+        try {
+            $cmd = $item.Command
+            if ([string]::IsNullOrWhiteSpace($cmd)) { throw "Empty command" }
+
+            # Oppdag kommandoer som vanligvis krever admin
+            $needsAdmin = $false
+            $trimCmd = ($cmd.TrimStart())
+            if ($cmd -match '(?i)\b(sfc|dism(\.exe)?|chkdsk)\b' -or
+                $trimCmd -match '(?i)HKLM:' -or
+                $trimCmd -match "(?i)reg\s+add\s+'?HKLM\\" -or
+                $cmd -match '(?i)/RestoreHealth|/StartComponentCleanup' ) {
+                $needsAdmin = $true
+            }
+
+            if ($needsAdmin) {
+                # Kjør forhøyet PowerShell og vent til ferdig
+                Start-Process -FilePath "powershell" -Verb RunAs -WindowStyle Minimized -Wait -ArgumentList @("-NoProfile", "-Command", $cmd)
+            }
+            else {
+                # Sørg for at Start-Process-kommandoer venter når de kjøres i samme sesjon
+                if ($trimCmd -match '^(?i)start-process\b' -and $cmd -notmatch '(?i)\-wait\b') {
+                    $cmd = $cmd + ' -Wait'
+                }
+
+                if ($cmd -match "\r?\n") {
+                    Invoke-Expression $cmd
+                } else {
+                    & powershell -NoProfile -Command $cmd
+                }
             }
         }
-        else {
-            $baseCommand = $item.Command + " -e --accept-source-agreements --accept-package-agreements"
-
-            $output = & powershell -NoProfile -Command $baseCommand 2>&1
-            
-            if ($output -match "Installer hash does not match") {
-                $installingPopup.FindName("MessageText").Text = "($i/$total) Fixing hash mismatch for $($item.Name)..."
-                $installingPopup.UpdateLayout()
-                $installingPopup.Dispatcher.Invoke([action]{
-                    $installingPopup.Left = $window.Left + ($window.Width - $installingPopup.ActualWidth) / 2
-                    $installingPopup.Top = $window.Top + ($window.Height - $installingPopup.ActualHeight) / 2
-                }, "Normal")
-
-                Start-Process -FilePath "powershell" -Verb RunAs -WindowStyle Minimized -ArgumentList "-NoProfile", "-Command", "winget settings --enable InstallerHashOverride" -Wait
-                $modifiedCommand = $item.Command + " -e --accept-source-agreements --accept-package-agreements --ignore-security-hash"
-                & powershell -NoProfile -Command $modifiedCommand
-            }
+        catch {
+            $errors += "[$($item.Name)] $_"
         }
 
         $i++
-
-    Show-CustomMessageBox -Message "Success!" -Title "Suksess"
+    }
+    $installingPopup.Close()
+    if ($errors.Count -gt 0) {
+        Show-CustomMessageBox -Message ("Some actions failed:`n" + ($errors -join "`n")) -Title "Ferdig (med feil)"
+    } else {
+        Show-CustomMessageBox -Message "Success!" -Title "Suksess"
+    }
     $tweaksList.SelectedItems.Clear()
     $repairList.SelectedItems.Clear()
-}})
+})
 
 $exitButton.Add_Click({
     $window.Close()
@@ -1242,6 +1367,11 @@ $uninstallList.Add_SelectionChanged({
 
 # Søking som bevarer hukede elementer
 $UninstallSearchBox.Add_TextChanged({
+    if ($UninstallSearchBox.Text -eq $UninstallSearchBox.Tag) {
+        # Ignore placeholder text
+        $uninstallList.ItemsSource = $AllUninstallItems
+        return
+    }
     $query = $UninstallSearchBox.Text.Trim().ToLower()
     if (-not $query) {
         $uninstallList.ItemsSource = $AllUninstallItems
