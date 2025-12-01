@@ -59,7 +59,7 @@
 You can customize the list of programs, browsers, games, tools, tweaks, and repair tasks by editing the `$programs`, `$browsers`, `$games`, `$tools`, `$tweaks`, and `$repair` arrays in the script.
 
 ## Example Tweaks
-
+- **Make Windows ready RPC Shutdown** 
 - **Remove Bing Search from Start Menu**
 - **Enable Windows Dark Mode**
 - **Disable Transparency Effects**
