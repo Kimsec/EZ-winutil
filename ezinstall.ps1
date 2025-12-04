@@ -7,7 +7,7 @@ Write-Host ""
 Add-Type -AssemblyName PresentationFramework
 
 # Function to download NVIDIA App
-function Download-NvidiaApp {
+function Download_NvidiaApp {
     try {
         Write-Host "Trying to find latest NVIDIA App version..." -ForegroundColor Yellow
         
@@ -23,223 +23,18 @@ function Download-NvidiaApp {
         }
     }
     catch {
-        Write-Host "Could not find latest version, using fallback..." -ForegroundColor Yellow
-    }
-    
-    # Fallback to known version
-    try {
-        Write-Host "Downloading NVIDIA App (fallback version)..." -ForegroundColor Yellow
-        Invoke-WebRequest -Uri 'https://uk.download.nvidia.com/nvapp/client/11.0.5.245/NVIDIA_app_v11.0.5.245.exe' -OutFile "$env:USERPROFILE\Downloads\NVIDIA_App.exe"
-        return $true
-    }
-    catch {
-        Write-Host "Failed to download NVIDIA App: $_" -ForegroundColor Red
+        Write-Warning "Could not retrieve NVIDIA App version: $_"
         return $false
     }
 }
-
-$programs = @(
-    [PSCustomObject]@{ Name = "Plex"; Command = "winget install --id=Plex.Plex" },
-    [PSCustomObject]@{ Name = "Discord"; Command = "winget install --id=Discord.Discord" },
-    [PSCustomObject]@{ Name = "Auto Accept For CS2"; Command = "Invoke-WebRequest -Uri 'https://github.com/kimsec/AutoAccept-CS2/releases/latest/download/AutoAccept.exe' -OutFile '$env:USERPROFILE\Documents\AutoAccept.exe'" },
-    [PSCustomObject]@{ Name = "NVIDIA App"; Command = "Download-NvidiaApp" },
-    [PSCustomObject]@{ Name = "Spotify"; Command = "winget install --id=Spotify.Spotify" },
-    [PSCustomObject]@{ Name = "OBS Studio"; Command = "winget install --id=OBSProject.OBSStudio" },
-    [PSCustomObject]@{ Name = "LM Studio"; Command = "winget install --id=ElementLabs.LMStudio" },
-    [PSCustomObject]@{ Name = "VLC Media Player"; Command = "winget install --id=VideoLAN.VLC" },
-    [PSCustomObject]@{ Name = "Steelseries GG"; Command = "winget install --id=SteelSeries.GG" },
-    [PSCustomObject]@{ Name = "Logitech G Hub"; Command = "winget install --id=Logitech.GHUB" },
-    [PSCustomObject]@{ Name = "Razer Synapse"; Command = "winget install --id=RazerInc.RazerInstaller4" },
-    [PSCustomObject]@{ Name = "Roccat Swarm"; Command = "winget install --id=TurtleBeach.ROCCATSwarm" },
-    [PSCustomObject]@{ Name = "Ookla Speedtest"; Command = "winget install --id=Ookla.Speedtest.Desktop" },
-	[PSCustomObject]@{ Name = "LocalSend"; Command = "winget install --id=Ookla.LocalSend.LocalSend" },
-    [PSCustomObject]@{ Name = "HWMonitor"; Command = "winget install --id=CPUID.HWMonitor" }
-)
-
-$browsers = @(
-    [PSCustomObject]@{ Name = "Google Chrome"; Command = "winget install --id=Google.Chrome" },
-    [PSCustomObject]@{ Name = "Mozilla Firefox"; Command = "winget install --id=Mozilla.Firefox" },
-    [PSCustomObject]@{ Name = "Opera"; Command = "winget install --id=Opera.Opera" },
-    [PSCustomObject]@{ Name = "Opera GX"; Command = "winget install --id=Opera.OperaGX" },
-    [PSCustomObject]@{ Name = "Safari"; Command = "winget install --id=Apple.Safari" },
-    [PSCustomObject]@{ Name = "Brave Browser"; Command = "winget install --id=Brave.Brave" },
-    [PSCustomObject]@{ Name = "Vivaldi"; Command = "winget install --id=Vivaldi.Vivaldi" },
-    [PSCustomObject]@{ Name = "Zen Browser"; Command = "winget install --id=Zen-Team.Zen-Browser" },
-    [PSCustomObject]@{ Name = "Tor Browser"; Command = "winget install --id=TorProject.TorBrowser" }
-)
-
-$games = @(
-    [PSCustomObject]@{ Name = "Steam"; Command = "winget install --id=Valve.Steam" },
-    [PSCustomObject]@{ Name = "Battle.net"; Command = "winget install --id=Blizzard.BattleNet" },
-    [PSCustomObject]@{ Name = "Epic Games Launcher"; Command = "winget install --id=EpicGames.EpicGamesLauncher" },
-    [PSCustomObject]@{ Name = "Roblox"; Command = "winget install --id=Roblox.Roblox" },
-    [PSCustomObject]@{ Name = "Minecraft Launcher"; Command = "winget install --id=Mojang.MinecraftLauncher" },
-    [PSCustomObject]@{ Name = "Ubisoft Connect"; Command = "winget install --id=Ubisoft.Connect" },
-    [PSCustomObject]@{ Name = "EA App"; Command = "winget install --id=ElectronicArts.EADesktop" },
-    [PSCustomObject]@{ Name = "Jagex Launcher"; Command = "winget install --id=Jagex.Runescape" },
-    [PSCustomObject]@{ Name = "GOG Galaxy"; Command = "winget install --id=GOG.Galaxy" },
-    [PSCustomObject]@{ Name = "Valorant (EU)"; Command = "winget install --id=RiotGames.Valorant.EU" },
-    [PSCustomObject]@{ Name = "LoL (EUW)"; Command = "winget install --id=RiotGames.LeagueOfLegends.EUW" },
-    [PSCustomObject]@{ Name = "Itch.io"; Command = "winget install --id=ItchIo.Itch" },
-    [PSCustomObject]@{ Name = "CurseForge"; Command = "winget install --id=Overwolf.CurseForge" }
-)
-
-$tools = @(
-    [PSCustomObject]@{ Name = "PowerShell 7"; Command = "winget install --id=Microsoft.PowerShell" },    
-    [PSCustomObject]@{ Name = "Wireguard VPN"; Command = "winget install --id=WireGuard.WireGuard" },
-    [PSCustomObject]@{ Name = "Cinebench R23"; Command = "winget install --id=Maxon.CinebenchR23" },
-    [PSCustomObject]@{ Name = "Heaven Benchmark"; Command = "winget install --id=Unigine.HeavenBenchmark" },
-    [PSCustomObject]@{ Name = "Raspberry Pi Imager"; Command = "winget install --id=RaspberryPiFoundation.RaspberryPiImager" },
-    [PSCustomObject]@{ Name = "Dolby Digital Codecs"; Command = "winget install --id=9NVJQJBDKN97" },
-    [PSCustomObject]@{ Name = "Balena Etcher"; Command = "winget install --id=Balena.Etcher" },
-    [PSCustomObject]@{ Name = "Ultimaker Cura"; Command = "winget install --id=Ultimaker.Cura" },
-	[PSCustomObject]@{ Name = "Tailscale"; Command = "winget install --id=Tailscale.Tailscale" },
-    [PSCustomObject]@{ Name = "Handbrake"; Command = "winget install --id=HandBrake.HandBrake" },
-    [PSCustomObject]@{ Name = "Maltego"; Command = "winget install --id=Maltego.Maltego" },
-    [PSCustomObject]@{ Name = "MS PowerToys"; Command = "winget install --id=Microsoft.PowerToys" },
-    [PSCustomObject]@{ Name = "WinRAR"; Command = "winget install --id=RARLab.WinRAR" },
-    [PSCustomObject]@{ Name = "Alt Drag/Snap"; Command = "winget install --id=AltSnap.AltSnap" },
-	[PSCustomObject]@{ Name = "Revo Uninstaller"; Command = "winget install --id=RevoUninstaller.RevoUninstaller" }
-)
-
-$editing = @(
-    [PSCustomObject]@{ Name = "Blender 3D"; Command = "winget install --id=BlenderFoundation.Blender" },
-    [PSCustomObject]@{ Name = "Notepad++"; Command = "winget install --id=Notepad++.Notepad++" },
-    [PSCustomObject]@{ Name = "Microsoft VSCode"; Command = "winget install --id=Microsoft.VisualStudioCode" },
-    [PSCustomObject]@{ Name = "Gimp (Photoshop)"; Command = "winget install --id=GIMP.GIMP.Nightly" },
-    [PSCustomObject]@{ Name = "CapCut"; Command = "winget install --id=ByteDance.CapCut" },
-    [PSCustomObject]@{ Name = "LibreOffice"; Command = "winget install --id=TheDocumentFoundation.LibreOffice" },
-    [PSCustomObject]@{ Name = "Google Drive"; Command = "winget install --id=Google.GoogleDrive" },
-    [PSCustomObject]@{ Name = "InkScape"; Command = "winget install --id=Inkscape.Inkscape" }
-)
-
-$tweaks = @(
-    [PSCustomObject]@{
-        Name = "Remove Bing Search from Menu"
-        Command = "reg add 'HKCU\Software\Policies\Microsoft\Windows\Explorer' /v 'DisableSearchBoxSuggestions' /t REG_DWORD /d 1 /f; " +
-                  "reg add 'HKCU\Software\Microsoft\Windows\CurrentVersion\Search' /v 'BingSearchEnabled' /t REG_DWORD /d 0 /f; " +
-                  "reg add 'HKCU\Software\Microsoft\Windows\CurrentVersion\Search' /v 'CortanaConsent' /t REG_DWORD /d 0 /f"
-    },
-    [PSCustomObject]@{
-        Name = "Windows Dark Mode"
-        Command = 'Start-Process -FilePath "$env:SystemRoot\Resources\Themes\dark.theme"'
-    },
-    [PSCustomObject]@{
-        Name = "Rename Your PC"
-        Command = 'Start-Process ms-settings:about; Start-Process "C:\WINDOWS\system32\SystemSettingsAdminFlows.exe" RenamePC'
-    },
-    [PSCustomObject]@{
-        Name = "Disable Transparency Effects"
-        Command = "reg add 'HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' /v 'EnableTransparency' /t REG_DWORD /d 0 /f"
-    },
-    [PSCustomObject]@{
-        Name = "Delete Temporary Files/Folders"
-        Command = 'Get-ChildItem -Path "C:\Windows\Temp" -Filter *.* -Recurse | Remove-Item -Force; Get-ChildItem -Path $env:TEMP -Filter *.* -Recurse | Remove-Item -Force'
-    },
-    [PSCustomObject]@{
-        Name = "Classic Right-Click Menu"
-        Command = @"
-reg add 'HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}' /f;
-reg add 'HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32' /f;
-Stop-Process -Name explorer -Force
-"@
-    },
-    [PSCustomObject]@{
-        Name = "Standard Right-Click Menu"
-        Command = @'
-Remove-Item -Path "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}" -Recurse -Confirm:$false -Force;
-Stop-Process -Name explorer -Force
-'@
-    },
-    [PSCustomObject]@{
-        Name = "Fast Visual Responsiveness"
-        Command = @"
-reg add 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects' /v 'VisualFXSetting' /t REG_DWORD /d 3 /f
-
-# bitmasken for user preferences (brukerdefinert oppsett):
-reg add 'HKCU\Control Panel\Desktop' /v 'UserPreferencesMask' /t REG_BINARY /d '90120000' /f
-
-# Ikke animere ved minimering / maksimering
-reg add 'HKCU\Control Panel\Desktop\WindowMetrics' /v 'MinAnimate' /t REG_SZ /d '0' /f
-
-# Slå av skygger under ikonetiketter
-reg add 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' /v 'ListviewShadow' /t REG_DWORD /d 0 /f
-
-# Slå av vindus-skygger
-reg add 'HKCU\Software\Microsoft\Windows\DWM' /v 'EnableWindowShadow' /t REG_DWORD /d 0 /f
-
-# Slå av skygge under musepekeren
-reg add 'HKCU\Control Panel\Cursors' /v 'EnablePointerShadow' /t REG_DWORD /d 0 /f
-
-# Hindre Windows i å beholde thumbnails i minnet
-reg add 'HKCU\Software\Microsoft\Windows\DWM' /v 'AlwaysHibernateThumbnails' /t REG_DWORD /d 1 /f
-
-# Slå av fade-effekt ved markeringsboks
-reg add 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects' /v 'SelectionFade' /t REG_SZ /d '0' /f
-
-# Slå av understrek for ikoner
-reg add 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects' /v 'IconUnderline' /t REG_SZ /d '0' /f
-
-# UserPreferencesMask - generelt 'slå av' en rekke effekter
-reg add 'HKCU\Control Panel\Desktop' /v 'UserPreferencesMask' /t REG_BINARY /d '9812000010000000' /f
-
-# Vis menyer umiddelbart
-reg add 'HKCU\Control Panel\Desktop' /v 'MenuShowDelay' /t REG_SZ /d '0' /f
-
-# Start Explorer på nytt (valgfritt for rask effekt):
-taskkill /F /IM explorer.exe
-start explorer.exe
-"@
-    },
-    [PSCustomObject]@{ 
-        Name = "AutoLogin" 
-        Command = "Invoke-WebRequest -Uri 'https://live.sysinternals.com/Autologon.exe' -OutFile '$env:temp\autologin.exe'; Start-Process -FilePath '$env:temp\autologin.exe' /accepteula -Wait"
-    },
-    [PSCustomObject]@{ 
-        Name = "Disable Mouse Acceleration"
-        Command = "reg add 'HKCU\Control Panel\Mouse' /v 'MouseSpeed' /t REG_SZ /d '0' /f; " +
-                  "reg add 'HKCU\Control Panel\Mouse' /v 'MouseThreshold1' /t REG_SZ /d '0' /f; " +
-                  "reg add 'HKCU\Control Panel\Mouse' /v 'MouseThreshold2' /t REG_SZ /d '0' /f"
-    }
-)
-
-$repair = @(
-    [PSCustomObject]@{
-        Name = "Search for Corrupted Files"
-        Command = 'Start-Transcript -Path "$env:USERPROFILE\Desktop\SFC_Scan_Report.txt" -Append; sfc /scannow; Stop-Transcript'
-    },
-    [PSCustomObject]@{
-        Name = "DISM Restore Health"
-        Command = 'Start-Transcript -Path "$env:USERPROFILE\Desktop\DISM_Report.txt" -Append; DISM.exe /Online /Cleanup-Image /RestoreHealth; Stop-Transcript'
-    },
-    [PSCustomObject]@{
-        Name = "Scan Drive For Errors"
-        Command = 'Start-Transcript -Path "$env:USERPROFILE\Desktop\Drive_Error_Report.txt" -Append; chkdsk C: /scan; Stop-Transcript'
-    },
-    [PSCustomObject]@{
-        Name = "Troubleshooter"
-        Command = 'Start-Process "ms-settings:troubleshoot"'
-    },
-    [PSCustomObject]@{
-        Name = "Disk Cleanup"
-        Command = 'cleanmgr.exe /d C: /VERYLOWDISK; Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase'
-    },
-    [PSCustomObject]@{
-        Name = "Full Scan & Repair (RECOMMENDED)"
-        Command = @"
-Write-Host '(1/4) Chkdsk' -ForegroundColor Green; Chkdsk  /scan;
-Write-Host '`n(2/4) SFC' -ForegroundColor Green; sfc /scannow;
-Write-Host '`n(3/4) DISM' -ForegroundColor Green; DISM /Online /Cleanup-Image /Restorehealth;
-Write-Host '`n(4/4) SFC' -ForegroundColor Green; sfc /scannow;
-Read-Host '`nPress Enter to Continue'"
-"@
-    },
-    [PSCustomObject]@{
-        Name = "Display Driver Uninstaller (DDU)"
-        Command = "winget install --id=Wagnardsoft.DisplayDriverUninstaller"
-    }
-)
-
+function Get-RemoteList {
+    param(
+        [string]$Uri,
+        [object[]]$Fallback = @()
+    )
+    try { return Invoke-RestMethod -Uri $Uri -UseBasicParsing }
+    catch { Write-Warning "Failed to load $Uri ($_)"; return $Fallback }
+}
 
 # --- 2) Opprett XAML for vinduet med 4 kolonner ---
 
@@ -806,14 +601,26 @@ $UninstallSearchBox.Add_LostFocus({
     }
 })
 
+$installerData = Get-RemoteList -Uri 'https://raw.githubusercontent.com/Kimsec/EZ-winutil/refs/heads/main/installer.json'
+$programs  = $installerData.programs
+$browsers  = $installerData.browsers
+$games     = $installerData.games
+$tools     = $installerData.tools
+$editing   = $installerData.editing
+
+$tweaksData = Get-RemoteList -Uri 'https://raw.githubusercontent.com/Kimsec/EZ-winutil/refs/heads/main/tweaks.json'
+$tweaks = $tweaksData.tweaks
+$repair = $tweaksData.repair
+
 # --- 4) Bind data til ListBox-ene ---
 $programList.ItemsSource = $programs | Sort-Object Name
 $browserList.ItemsSource = $browsers | Sort-Object Name
 $gameList.ItemsSource    = $games | Sort-Object Name
-$tweaksList.ItemsSource  = $tweaks | Sort-Object Name
-$repairList.ItemsSource  = $repair | Sort-Object Name
 $toolsList.ItemsSource   = $tools | Sort-Object Name
 $editingList.ItemsSource = $editing | Sort-Object Name
+
+$tweaksList.ItemsSource  = $tweaks | Sort-Object Name
+$repairList.ItemsSource  = $repair | Sort-Object Name
 
 # Hent liste over oppdaterbare programmer med winget
 function Get-WingetUpgrades {
@@ -1064,8 +871,8 @@ $installButton.Add_Click({
             $installingPopup.Top = $window.Top + ($window.Height - $installingPopup.ActualHeight) / 2
         }, "Normal")
 
-        if ($item.Command -like "Invoke-WebRequest*" -or $item.Command -eq "Download-NvidiaApp") {
-            if ($item.Command -eq "Download-NvidiaApp") {
+        if ($item.Command -like "Invoke-WebRequest*" -or $item.Command -eq "Download_NvidiaApp") {
+            if ($item.Command -eq "Download_NvidiaApp") {
                 $success = & $item.Command
                 if ($success) {
                     Show-CustomMessageBox -Message "NVIDIA App installer is saved in \Downloads folder." -Title "Information"
