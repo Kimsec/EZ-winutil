@@ -1,0 +1,73 @@
+{
+  "programs": [
+    { "Name": "Plex", "Command": "winget install --id=Plex.Plex" },
+    { "Name": "Discord", "Command": "winget install --id=Discord.Discord" },
+    { "Name": "Auto Accept For CS2", "Command": "Invoke-WebRequest -Uri 'https://github.com/kimsec/AutoAccept-CS2/releases/latest/download/AutoAccept.exe' -OutFile '$env:USERPROFILE\\Documents\\AutoAccept.exe'" },
+    { "Name": "NVIDIA App", "Command": "Download_NvidiaApp" },
+    { "Name": "Spotify", "Command": "winget install --id=Spotify.Spotify" },
+    { "Name": "OBS Studio", "Command": "winget install --id=OBSProject.OBSStudio" },
+    { "Name": "LM Studio", "Command": "winget install --id=ElementLabs.LMStudio" },
+    { "Name": "VLC Media Player", "Command": "winget install --id=VideoLAN.VLC" },
+    { "Name": "Steelseries GG", "Command": "winget install --id=SteelSeries.GG" },
+    { "Name": "Logitech G Hub", "Command": "winget install --id=Logitech.GHUB" },
+    { "Name": "Razer Synapse", "Command": "winget install --id=RazerInc.RazerInstaller4" },
+    { "Name": "Roccat Swarm", "Command": "winget install --id=TurtleBeach.ROCCATSwarm" },
+    { "Name": "Ookla Speedtest", "Command": "winget install --id=Ookla.Speedtest.Desktop" },
+    { "Name": "LocalSend", "Command": "winget install --id=Ookla.LocalSend.LocalSend" },
+    { "Name": "HWMonitor", "Command": "winget install --id=CPUID.HWMonitor" }
+  ],
+  "browsers": [
+    { "Name": "Google Chrome", "Command": "winget install --id=Google.Chrome" },
+    { "Name": "Mozilla Firefox", "Command": "winget install --id=Mozilla.Firefox" },
+    { "Name": "Opera", "Command": "winget install --id=Opera.Opera" },
+    { "Name": "Opera GX", "Command": "winget install --id=Opera.OperaGX" },
+    { "Name": "Safari", "Command": "winget install --id=Apple.Safari" },
+    { "Name": "Brave Browser", "Command": "winget install --id=Brave.Brave" },
+    { "Name": "Vivaldi", "Command": "winget install --id=Vivaldi.Vivaldi" },
+    { "Name": "Zen Browser", "Command": "winget install --id=Zen-Team.Zen-Browser" },
+    { "Name": "Tor Browser", "Command": "winget install --id=TorProject.TorBrowser" }
+  ],
+  "games": [
+    { "Name": "Steam", "Command": "winget install --id=Valve.Steam" },
+    { "Name": "Battle.net", "Command": "winget install --id=Blizzard.BattleNet" },
+    { "Name": "Epic Games Launcher", "Command": "winget install --id=EpicGames.EpicGamesLauncher" },
+    { "Name": "Roblox", "Command": "winget install --id=Roblox.Roblox" },
+    { "Name": "Minecraft Launcher", "Command": "winget install --id=Mojang.MinecraftLauncher" },
+    { "Name": "Ubisoft Connect", "Command": "winget install --id=Ubisoft.Connect" },
+    { "Name": "EA App", "Command": "winget install --id=ElectronicArts.EADesktop" },
+    { "Name": "Jagex Launcher", "Command": "winget install --id=Jagex.Runescape" },
+    { "Name": "GOG Galaxy", "Command": "winget install --id=GOG.Galaxy" },
+    { "Name": "Valorant (EU)", "Command": "winget install --id=RiotGames.Valorant.EU" },
+    { "Name": "LoL (EUW)", "Command": "winget install --id=RiotGames.LeagueOfLegends.EUW" },
+    { "Name": "Itch.io", "Command": "winget install --id=ItchIo.Itch" },
+    { "Name": "CurseForge", "Command": "winget install --id=Overwolf.CurseForge" }
+  ],
+  "tools": [
+    { "Name": "PowerShell 7", "Command": "winget install --id=Microsoft.PowerShell" },
+    { "Name": "Wireguard VPN", "Command": "winget install --id=WireGuard.WireGuard" },
+    { "Name": "Cinebench R23", "Command": "winget install --id=Maxon.CinebenchR23" },
+    { "Name": "Heaven Benchmark", "Command": "winget install --id=Unigine.HeavenBenchmark" },
+    { "Name": "Raspberry Pi Imager", "Command": "winget install --id=RaspberryPiFoundation.RaspberryPiImager" },
+    { "Name": "Dolby Digital Codecs", "Command": "winget install --id=9NVJQJBDKN97" },
+    { "Name": "Balena Etcher", "Command": "winget install --id=Balena.Etcher" },
+    { "Name": "Ultimaker Cura", "Command": "winget install --id=Ultimaker.Cura" },
+    { "Name": "Tailscale", "Command": "winget install --id=Tailscale.Tailscale" },
+    { "Name": "Handbrake", "Command": "winget install --id=HandBrake.HandBrake" },
+    { "Name": "Maltego", "Command": "winget install --id=Maltego.Maltego" },
+    { "Name": "MS PowerToys", "Command": "winget install --id=Microsoft.PowerToys" },
+    { "Name": "WinRAR", "Command": "winget install --id=RARLab.WinRAR" },
+    { "Name": "Alt Drag/Snap", "Command": "winget install --id=AltSnap.AltSnap" },
+    { "Name": "Revo Uninstaller", "Command": "winget install --id=RevoUninstaller.RevoUninstaller" }
+  ],
+  "editing": [
+    { "Name": "Blender 3D", "Command": "winget install --id=BlenderFoundation.Blender" },
+    { "Name": "Notepad++", "Command": "winget install --id=Notepad++.Notepad++" },
+    { "Name": "Microsoft VSCode", "Command": "winget install --id=Microsoft.VisualStudioCode" },
+    { "Name": "Gimp (Photoshop)", "Command": "winget install --id=GIMP.GIMP.Nightly" },
+    { "Name": "CapCut", "Command": "winget install --id=ByteDance.CapCut" },
+    { "Name": "LibreOffice", "Command": "winget install --id=TheDocumentFoundation.LibreOffice" },
+    { "Name": "Google Drive", "Command": "winget install --id=Google.GoogleDrive" },
+    { "Name": "Affinity (Photoshop)", "Command": "winget install --id=Canva.Affinity" },
+    { "Name": "InkScape", "Command": "winget install --id=Inkscape.Inkscape" }
+  ]
+}

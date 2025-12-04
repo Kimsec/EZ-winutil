@@ -1,0 +1,78 @@
+{
+  "tweaks": [
+    {
+      "Name": "Remove Bing Search from Menu",
+      "Command": "reg add 'HKCU\\Software\\Policies\\Microsoft\\Windows\\Explorer' /v 'DisableSearchBoxSuggestions' /t REG_DWORD /d 1 /f; reg add 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Search' /v 'BingSearchEnabled' /t REG_DWORD /d 0 /f; reg add 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Search' /v 'CortanaConsent' /t REG_DWORD /d 0 /f"
+    },
+    {
+      "Name": "Windows Dark Mode",
+      "Command": "Start-Process -FilePath \"$env:SystemRoot\\Resources\\Themes\\dark.theme\""
+    },
+    {
+      "Name": "RPC Shutdown",
+      "Command": "Set-Service -Name 'RemoteRegistry' -StartupType Manual -ErrorAction SilentlyContinue; Start-Service -Name 'RemoteRegistry' -ErrorAction SilentlyContinue; New-Item -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System' -Force | Out-Null; New-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System' -Name 'LocalAccountTokenFilterPolicy' -PropertyType DWord -Value 1 -Force | Out-Null; Enable-NetFirewallRule -DisplayGroup 'File and Printer Sharing' -ErrorAction SilentlyContinue; Enable-NetFirewallRule -DisplayGroup 'Remote Service Management' -ErrorAction SilentlyContinue"
+    },
+    {
+      "Name": "Rename Your PC",
+      "Command": "Start-Process ms-settings:about; Start-Process \"C:\\WINDOWS\\system32\\SystemSettingsAdminFlows.exe\" RenamePC"
+    },
+    {
+      "Name": "Disable Transparency Effects",
+      "Command": "reg add 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize' /v 'EnableTransparency' /t REG_DWORD /d 0 /f"
+    },
+    {
+      "Name": "Delete Temporary Files/Folders",
+      "Command": "Get-ChildItem -Path \"C:\\Windows\\Temp\" -Filter *.* -Recurse | Remove-Item -Force; Get-ChildItem -Path $env:TEMP -Filter *.* -Recurse | Remove-Item -Force"
+    },
+    {
+      "Name": "Classic Right-Click Menu",
+      "Command": "reg add 'HKCU\\Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}' /f;\nreg add 'HKCU\\Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\\InprocServer32' /f;\nStop-Process -Name explorer -Force"
+    },
+    {
+      "Name": "Standard Right-Click Menu",
+      "Command": "Remove-Item -Path \"HKCU:\\Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\" -Recurse -Confirm:$false -Force;\nStop-Process -Name explorer -Force"
+    },
+    {
+      "Name": "Fast Visual Responsiveness",
+      "Command": "reg add 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects' /v 'VisualFXSetting' /t REG_DWORD /d 3 /f\nreg add 'HKCU\\Control Panel\\Desktop' /v 'UserPreferencesMask' /t REG_BINARY /d '90120000' /f\nreg add 'HKCU\\Control Panel\\Desktop\\WindowMetrics' /v 'MinAnimate' /t REG_SZ /d '0' /f\nreg add 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced' /v 'ListviewShadow' /t REG_DWORD /d 0 /f\nreg add 'HKCU\\Software\\Microsoft\\Windows\\DWM' /v 'EnableWindowShadow' /t REG_DWORD /d 0 /f\nreg add 'HKCU\\Control Panel\\Cursors' /v 'EnablePointerShadow' /t REG_DWORD /d 0 /f\nreg add 'HKCU\\Software\\Microsoft\\Windows\\DWM' /v 'AlwaysHibernateThumbnails' /t REG_DWORD /d 1 /f\nreg add 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects' /v 'SelectionFade' /t REG_SZ /d '0' /f\nreg add 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects' /v 'IconUnderline' /t REG_SZ /d '0' /f\nreg add 'HKCU\\Control Panel\\Desktop' /v 'UserPreferencesMask' /t REG_BINARY /d '9812000010000000' /f\nreg add 'HKCU\\Control Panel\\Desktop' /v 'MenuShowDelay' /t REG_SZ /d '0' /f\ntaskkill /F /IM explorer.exe\nstart explorer.exe"
+    },
+    {
+      "Name": "AutoLogin",
+      "Command": "Invoke-WebRequest -Uri 'https://live.sysinternals.com/Autologon.exe' -OutFile '$env:temp\\autologin.exe'; Start-Process -FilePath '$env:temp\\autologin.exe' /accepteula -Wait"
+    },
+    {
+      "Name": "Disable Mouse Acceleration",
+      "Command": "reg add 'HKCU\\Control Panel\\Mouse' /v 'MouseSpeed' /t REG_SZ /d '0' /f; reg add 'HKCU\\Control Panel\\Mouse' /v 'MouseThreshold1' /t REG_SZ /d '0' /f; reg add 'HKCU\\Control Panel\\Mouse' /v 'MouseThreshold2' /t REG_SZ /d '0' /f"
+    }
+  ],
+  "repair": [
+    {
+      "Name": "Search for Corrupted Files",
+      "Command": "Start-Transcript -Path \"$env:USERPROFILE\\Desktop\\SFC_Scan_Report.txt\" -Append; sfc /scannow; Stop-Transcript"
+    },
+    {
+      "Name": "DISM Restore Health",
+      "Command": "Start-Transcript -Path \"$env:USERPROFILE\\Desktop\\DISM_Report.txt\" -Append; DISM.exe /Online /Cleanup-Image /RestoreHealth; Stop-Transcript"
+    },
+    {
+      "Name": "Scan Drive For Errors",
+      "Command": "Start-Transcript -Path \"$env:USERPROFILE\\Desktop\\Drive_Error_Report.txt\" -Append; chkdsk C: /scan; Stop-Transcript"
+    },
+    {
+      "Name": "Troubleshooter",
+      "Command": "Start-Process \"ms-settings:troubleshoot\""
+    },
+    {
+      "Name": "Disk Cleanup",
+      "Command": "cleanmgr.exe /d C: /VERYLOWDISK; Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase"
+    },
+    {
+      "Name": "Full Scan & Repair (RECOMMENDED)",
+      "Command": "Write-Host '(1/4) Chkdsk' -ForegroundColor Green; Chkdsk /scan; Write-Host '\\n(2/4) SFC' -ForegroundColor Green; sfc /scannow; Write-Host '\\n(3/4) DISM' -ForegroundColor Green; DISM /Online /Cleanup-Image /Restorehealth; Write-Host '\\n(4/4) SFC' -ForegroundColor Green; sfc /scannow; Read-Host '\\nPress Enter to Continue'"
+    },
+    {
+      "Name": "Display Driver Uninstaller (DDU)",
+      "Command": "winget install --id=Wagnardsoft.DisplayDriverUninstaller"
+    }
+  ]
+}
