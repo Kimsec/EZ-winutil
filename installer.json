@@ -68,6 +68,7 @@
     { "Name": "LibreOffice", "Command": "winget install --id=TheDocumentFoundation.LibreOffice" },
     { "Name": "Google Drive", "Command": "winget install --id=Google.GoogleDrive" },
     { "Name": "Affinity (Photoshop)", "Command": "winget install --id=Canva.Affinity" },
+    { "Name": "Audacity", "Command": "winget install --id=Audacity.Audacity" },
     { "Name": "InkScape", "Command": "winget install --id=Inkscape.Inkscape" }
   ]
 }
