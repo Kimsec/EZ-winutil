@@ -863,7 +863,19 @@ $installButton.Add_Click({
     $selectedItems = @($selectedPrograms) + @($selectedBrowsers) + @($selectedGames) + @($selectedTools) + @($selectedEditing)
     $installingPopup = Show-InstallingPopup -Message "Initialising install..."
 
+    $wingetItems = @()
+    $otherItems  = @()
+
     foreach ($item in $selectedItems) {
+        if ($item.Command -match '^(?i)winget\s+install\b') {
+            $wingetItems += $item
+        }
+        else {
+            $otherItems += $item
+        }
+    }
+
+    foreach ($item in $otherItems) {
         $installingPopup.FindName("MessageText").Text = "Downloading & installing $($item.Name). Please wait..."
         $installingPopup.UpdateLayout()
         $installingPopup.Dispatcher.Invoke([action]{
@@ -907,14 +919,62 @@ $installButton.Add_Click({
         }
     }
 
+    $errorsFound = $false
+
+    if ($wingetItems.Count -gt 0) {
+        $installingPopup.FindName("MessageText").Text = "Installing $($wingetItems.Count) app(s). Please wait..."
+        $installingPopup.UpdateLayout()
+        $installingPopup.Dispatcher.Invoke([action]{
+            $installingPopup.Left = $window.Left + ($window.Width - $installingPopup.ActualWidth) / 2
+            $installingPopup.Top = $window.Top + ($window.Height - $installingPopup.ActualHeight) / 2
+        }, "Normal")
+
+        $cmds = $wingetItems | ForEach-Object { "$($_.Command) -e --accept-source-agreements --accept-package-agreements" }
+        $cmdsLiteral = ($cmds | ForEach-Object { "'{0}'" -f ($_ -replace "'", "''") }) -join ', '
+
+        $script = @"
+`$ErrorActionPreference = 'Stop'
+`$cmds = @($cmdsLiteral)
+`$anyFailed = `$false
+
+foreach (`$c in `$cmds) {
+    `$out = & powershell -NoProfile -Command `$c 2>&1
+    if (`$LASTEXITCODE -ne 0 -and `$out -match 'Installer hash does not match') {
+        try { winget settings --enable InstallerHashOverride | Out-Null } catch { }
+        `$retry = `$c + ' --ignore-security-hash'
+        `$out = & powershell -NoProfile -Command `$retry 2>&1
+    }
+    if (`$LASTEXITCODE -ne 0) { `$anyFailed = `$true }
+}
+
+if (`$anyFailed) { exit 1 } else { exit 0 }
+"@
+
+        $proc = Start-Process -Verb RunAs -WindowStyle Hidden -Wait -PassThru -FilePath "powershell" -ArgumentList @(
+            "-NoProfile",
+            "-Command",
+            $script
+        )
+
+        if ($proc.ExitCode -ne 0) {
+            $errorsFound = $true
+        }
+    }
+
     $installingPopup.Close()
-    Show-CustomMessageBox -Message "Installed Successfully." -Title "Suksess"
+    if ($errorsFound) {
+        Show-CustomMessageBox -Message "Finished installing with some errors." -Title "Ferdig (med feil)"
+    }
+    else {
+        Show-CustomMessageBox -Message "Installed Successfully." -Title "Suksess"
+    }
     $programList.SelectedItems.Clear()
     $browserList.SelectedItems.Clear()
     $gameList.SelectedItems.Clear()
     $toolsList.SelectedItems.Clear()
     $editingList.SelectedItems.Clear()
 })
+
 
 $installTweaks.Add_Click({
     $selectedTweaks = $tweaksList.SelectedItems
@@ -1042,18 +1102,17 @@ foreach (`$id in `$ids) {
 if (`$anyFailed) { exit 1 } else { exit 0 }
 "@
 
-        $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($elevatedScript))
-
         $proc = Start-Process -Verb RunAs -WindowStyle Hidden -Wait -PassThru -FilePath "powershell" -ArgumentList @(
             "-NoProfile",
-            "-ExecutionPolicy", "Bypass",
-            "-EncodedCommand", $encoded
+            "-Command",
+            "-ExecutionPolicy Bypass",
+            $elevatedScript
         )
 
         $updatePopup.Close()
 
         if ($proc.ExitCode -eq 0) {
-            Show-CustomMessageBox -Message "Program(s) are updated.`nNB: Some programs do not allow updating through third party." -Title "Ferdig"
+            Show-CustomMessageBox -Message "Program(s) are updated." -Title "Ferdig"
         }
         else {
             Show-CustomMessageBox -Message "Finished updating with some errors.`nNB: Some programs do not allow updating through third party." -Title "Ferdig (med feil)"
@@ -1155,23 +1214,23 @@ $uninstallNowButton.Add_Click({
 
         switch ($item.Source) {
             'winget' {
-                Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList "-Command", "winget uninstall --silent --id='$($item.Id)'"
+                Start-Process powershell -Verb RunAs -WindowStyle Hidden -wait -ArgumentList "-Command", "winget uninstall --silent --id='$($item.Id)'"
             }
             'msi' {
-                Start-Process msiexec.exe -Verb RunAs -WindowStyle Hidden -ArgumentList "/x $($item.Id) /qn"
+                Start-Process msiexec.exe -Verb RunAs -WindowStyle Hidden -wait -ArgumentList "/x $($item.Id) /qn"
             }
             'appx' {
-                Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList "-Command", "Remove-AppxPackage -AllUsers -Package '$($item.Id)'"
+                Start-Process powershell -Verb RunAs -WindowStyle Hidden -wait -ArgumentList "-Command", "Remove-AppxPackage -AllUsers -Package '$($item.Id)'"
             }
             default {
-                Start-Process cmd.exe -Verb RunAs -WindowStyle Hidden -ArgumentList "/C "$($item.Id)""
+                Start-Process cmd.exe -Verb RunAs -WindowStyle Hidden -wait -ArgumentList "/C "$($item.Id)""
             }
         }
         $i++
     }
 
     $popup.Close()
-    Show-CustomMessageBox -Message "Chosen programs uninstalled." -Title "Ferdig"
+    Show-CustomMessageBox -Message "$($selected.Count) program(s) uninstalled." -Title "Ferdig"
 
     # Oppdater liste og nullstill valg
     $UninstallSearchBox.Text = ""
