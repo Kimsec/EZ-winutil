@@ -900,7 +900,7 @@ $installButton.Add_Click({
                     $installingPopup.Top = $window.Top + ($window.Height - $installingPopup.ActualHeight) / 2
                 }, "Normal")
 
-                Start-Process -FilePath "powershell" -Verb RunAs -WindowStyle Minimized -ArgumentList "-NoProfile", "-Command", "winget settings --enable InstallerHashOverride" -Wait
+                Start-Process -FilePath "powershell" -Verb RunAs -WindowStyle Hidden -ArgumentList "-NoProfile", "-Command", "winget settings --enable InstallerHashOverride" -Wait
                 $modifiedCommand = $item.Command + " -e --accept-source-agreements --accept-package-agreements --ignore-security-hash"
                 & powershell -NoProfile -Command $modifiedCommand
             }
@@ -957,7 +957,7 @@ $installTweaks.Add_Click({
 
             if ($needsAdmin) {
                 # Kjør forhøyet PowerShell og vent til ferdig
-                Start-Process -FilePath "powershell" -Verb RunAs -WindowStyle Minimized -Wait -ArgumentList @("-NoProfile", "-Command", $cmd)
+                Start-Process -FilePath "powershell" -Verb RunAs -WindowStyle Hidden -Wait -ArgumentList @("-NoProfile", "-Command", $cmd)
             }
             else {
                 # Sørg for at Start-Process-kommandoer venter når de kjøres i samme sesjon
@@ -1003,30 +1003,73 @@ $updateNowButton.Add_Click({
         return
     }
 
-    $updatePopup = Show-InstallingPopup -Message "Initialising updates..."
-
-    $total = $selectedUpdates.Count
-    $index = 1
-
-    foreach ($app in $selectedUpdates) {
-        $updatePopup.FindName("MessageText").Text = "Updating ($index/$total): $($app.Display). Please wait..."
-        $updatePopup.UpdateLayout()
-        $updatePopup.Dispatcher.Invoke([action]{
-            $updatePopup.Left = $window.Left + ($window.Width - $updatePopup.ActualWidth) / 2
-            $updatePopup.Top = $window.Top + ($window.Height - $updatePopup.ActualHeight) / 2
-        }, "Normal")
-
-        $cmd = "winget upgrade --id='$($app.Id)' --accept-source-agreements --accept-package-agreements"
-        Start-Process -Verb RunAs -WindowStyle Minimized -Wait -FilePath "powershell" -ArgumentList "-NoProfile", "-Command", $cmd
-
-        $index++
+    $ids = @(
+        $selectedUpdates |
+            ForEach-Object { $_.Id } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+            Select-Object -Unique
+    )
+    if ($ids.Count -eq 0) {
+        Show-CustomMessageBox -Message "Ingen gyldige oppdateringer valgt." -Title "Info"
+        return
     }
 
-    $updatePopup.Close()
-    Show-CustomMessageBox -Message "Program(s) are updated.`nNB: Some programs do not allow updating through third party." -Title "Ferdig"
-    $updateList.SelectedItems.Clear()
-    $updateList.ItemsSource = Get-WingetUpgrades | Sort-Object Display
+    $updatePopup = Show-InstallingPopup -Message "Updating $($ids.Count) app(s). Please wait, it might take a while..."
+    $updatePopup.UpdateLayout()
+    $updatePopup.Dispatcher.Invoke([action]{
+        $updatePopup.Left = $window.Left + ($window.Width - $updatePopup.ActualWidth) / 2
+        $updatePopup.Top = $window.Top + ($window.Height - $updatePopup.ActualHeight) / 2
+    }, "Normal")
+
+    try {
+        $idsLiteral = ($ids | ForEach-Object { "'{0}'" -f ($_ -replace "'", "''") }) -join ", "
+
+        $elevatedScript = @" 
+`$ErrorActionPreference = 'Stop'
+ 
+`$ids = @($idsLiteral)
+`$anyFailed = `$false
+
+foreach (`$id in `$ids) {
+    if ([string]::IsNullOrWhiteSpace(`$id)) { continue }
+
+    `$out = & winget upgrade -e --id `$id --silent --disable-interactivity --accept-source-agreements --accept-package-agreements 2>&1
+    if (`$LASTEXITCODE -ne 0) {
+        `$anyFailed = `$true
+    }
+}
+
+if (`$anyFailed) { exit 1 } else { exit 0 }
+"@
+
+        $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($elevatedScript))
+
+        $proc = Start-Process -Verb RunAs -WindowStyle Hidden -Wait -PassThru -FilePath "powershell" -ArgumentList @(
+            "-NoProfile",
+            "-ExecutionPolicy", "Bypass",
+            "-EncodedCommand", $encoded
+        )
+
+        $updatePopup.Close()
+
+        if ($proc.ExitCode -eq 0) {
+            Show-CustomMessageBox -Message "Program(s) are updated.`nNB: Some programs do not allow updating through third party." -Title "Ferdig"
+        }
+        else {
+            Show-CustomMessageBox -Message "Finished updating with some errors.`nNB: Some programs do not allow updating through third party." -Title "Ferdig (med feil)"
+        }
+    }
+    catch {
+        try { $updatePopup.Close() } catch { }
+        Show-CustomMessageBox -Message "Update aborted or failed: $($_.Exception.Message)" -Title "Error"
+    }
+    finally {
+        $updateList.SelectedItems.Clear()
+        $updateList.ItemsSource = Get-WingetUpgrades | Sort-Object Display
+    }
 })
+
+
 $selectAllUpdatesCheckbox.Add_Checked({
     if ($suppressCheckboxEvent) { return }
     $suppressCheckboxEvent = $true
