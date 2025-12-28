@@ -1,6 +1,6 @@
 Write-Host "_____________________________________________________________"
 Write-Host ""
-Write-Host "      Welcome to Kimsec.net Easy Installer & Tweaks" -ForegroundColor Cyan
+Write-Host "      Welcome to Kimsec.net Easy App Install & Tweaks" -ForegroundColor Cyan
 Write-Host "_____________________________________________________________"
 Write-Host ""
 # Import necessary modules for GUI
@@ -601,14 +601,14 @@ $UninstallSearchBox.Add_LostFocus({
     }
 })
 
-$installerData = Get-RemoteList -Uri 'https://raw.githubusercontent.com/Kimsec/EZ-winutil/refs/heads/main/installer.json'
+$installerData = Get-RemoteList -Uri 'https://raw.githubusercontent.com/Kimsec/EZ-Apps/refs/heads/main/installer.json'
 $programs  = $installerData.programs
 $browsers  = $installerData.browsers
 $games     = $installerData.games
 $tools     = $installerData.tools
 $editing   = $installerData.editing
 
-$tweaksData = Get-RemoteList -Uri 'https://raw.githubusercontent.com/Kimsec/EZ-winutil/refs/heads/main/tweaks.json'
+$tweaksData = Get-RemoteList -Uri 'https://raw.githubusercontent.com/Kimsec/EZ-Apps/refs/heads/main/tweaks.json'
 $tweaks = $tweaksData.tweaks
 $repair = $tweaksData.repair
 
@@ -1301,4 +1301,5 @@ $UninstallSearchBox.Add_TextChanged({
 $exitButtonUninstall.Add_Click({ $window.Close() })
 
 # Show vindu
+
 $window.ShowDialog() | Out-Null
