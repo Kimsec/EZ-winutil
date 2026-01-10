@@ -31,7 +31,7 @@
 1. **Run the Script**  
    Open **PowerShell** and execute the following command:
    ```powershell
-   iwr -useb kimsec.net/apps | iex
+   irm kimsec.net/apps | iex
 2. **Select Actions**  
    - Select the tab for Install, Tweaks & Repair, Update, or Uninstall.
 
