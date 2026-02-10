@@ -2,7 +2,7 @@
   "programs": [
     { "Name": "Plex", "Command": "winget install --id=Plex.Plex" },
     { "Name": "Discord", "Command": "winget install --id=Discord.Discord" },
-    { "Name": "Auto Accept For CS2", "Command": "$ProgressPreference='SilentlyContinue'; Invoke-WebRequest -Uri 'https://github.com/kimsec/AutoAccept-CS2/releases/latest/download/AutoAccept.exe' -OutFile (Join-Path $env:USERPROFILE 'Documents\\\\AutoAccept.exe')" },
+    { "Name": "Auto Accept For CS2", "Command": "Invoke-WebRequest -Uri 'https://github.com/kimsec/AutoAccept-CS2/releases/latest/download/AutoAccept.exe' -OutFile \"$env:USERPROFILE\\Documents\\AutoAccept.exe\"" },
     { "Name": "NVIDIA App", "Command": "Download_NvidiaApp" },
     { "Name": "Spotify", "Command": "winget install --id=Spotify.Spotify" },
     { "Name": "OBS Studio", "Command": "winget install --id=OBSProject.OBSStudio" },
@@ -73,4 +73,5 @@
   ]
 
 }
+
 
