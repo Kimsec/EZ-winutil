@@ -1074,7 +1074,7 @@ $updateNowButton.Add_Click({
         return
     }
 
-    $updatePopup = Show-InstallingPopup -Message "Updating $($ids.Count) app(s). Please wait, it might take a while..."
+    $updatePopup = Show-InstallingPopup -Message "Updating $($ids.Count) app(s). Check the PowerShell window for progress."
     $updatePopup.UpdateLayout()
     $updatePopup.Dispatcher.Invoke([action]{
         $updatePopup.Left = $window.Left + ($window.Width - $updatePopup.ActualWidth) / 2
@@ -1093,7 +1093,7 @@ $updateNowButton.Add_Click({
 foreach (`$id in `$ids) {
     if ([string]::IsNullOrWhiteSpace(`$id)) { continue }
 
-    `$out = & winget upgrade -e --id `$id --silent --disable-interactivity --accept-source-agreements --accept-package-agreements 2>&1
+    & winget upgrade -e --id `$id --disable-interactivity --accept-source-agreements --accept-package-agreements 2>&1
     if (`$LASTEXITCODE -ne 0) {
         `$anyFailed = `$true
     }
@@ -1102,10 +1102,10 @@ foreach (`$id in `$ids) {
 if (`$anyFailed) { exit 1 } else { exit 0 }
 "@
 
-        $proc = Start-Process -Verb RunAs -WindowStyle Hidden -Wait -PassThru -FilePath "powershell" -ArgumentList @(
+        $proc = Start-Process -Verb RunAs -WindowStyle Normal -Wait -PassThru -FilePath "powershell" -ArgumentList @(
             "-NoProfile",
+            "-ExecutionPolicy", "Bypass",
             "-Command",
-            "-ExecutionPolicy Bypass",
             $elevatedScript
         )
 
