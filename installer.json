@@ -25,6 +25,7 @@
     { "Name": "Brave Browser", "Command": "winget install --id=Brave.Brave" },
     { "Name": "Vivaldi", "Command": "winget install --id=Vivaldi.Vivaldi" },
     { "Name": "Zen Browser", "Command": "winget install --id=Zen-Team.Zen-Browser" },
+    { "Name": "Helium", "Command": "winget install --id=ImputNet.Helium" },
     { "Name": "Tor Browser", "Command": "winget install --id=TorProject.TorBrowser" }
   ],
   "games": [
@@ -73,5 +74,6 @@
   ]
 
 }
+
 
 
