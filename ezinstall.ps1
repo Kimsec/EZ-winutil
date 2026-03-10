@@ -1017,7 +1017,7 @@ $installTweaks.Add_Click({
 
             if ($needsAdmin) {
                 # Kjør forhøyet PowerShell og vent til ferdig
-                Start-Process -FilePath "powershell" -Verb RunAs -WindowStyle Hidden -Wait -ArgumentList @("-NoProfile", "-Command", $cmd)
+                Start-Process -FilePath "powershell" -Verb RunAs -WindowStyle Normal -Wait -ArgumentList @("-NoProfile", "-Command", $cmd)
             }
             else {
                 # Sørg for at Start-Process-kommandoer venter når de kjøres i samme sesjon
