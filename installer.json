@@ -13,7 +13,7 @@
     { "Name": "Razer Synapse", "Command": "winget install --id=RazerInc.RazerInstaller4" },
     { "Name": "Roccat Swarm", "Command": "winget install --id=TurtleBeach.ROCCATSwarm" },
     { "Name": "Ookla Speedtest", "Command": "winget install --id=Ookla.Speedtest.Desktop" },
-    { "Name": "LocalSend", "Command": "winget install --id=Ookla.LocalSend.LocalSend" },
+    { "Name": "LocalSend", "Command": "winget install --id=LocalSend.LocalSend" },
     { "Name": "HWMonitor", "Command": "winget install --id=CPUID.HWMonitor" }
   ],
   "browsers": [
